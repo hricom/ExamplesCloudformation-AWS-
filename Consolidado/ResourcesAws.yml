@@ -1,0 +1,51 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Master stack: PathToMasterStackFile'
+
+Parameters:
+  NameProject:
+    Description: Is used as test project tag value for all resources
+    Type: String
+    Default: TestProject
+    AllowedPattern: ^[A-Za-z0-9]*$
+    ConstraintDescription: must contain only alphanumeric characters and numbers.
+    MaxLength: 20
+    MinLength: 1
+  Environment:
+    Description: Environment to deploy. Use Develop for limited resources and no alerts.
+    Type: String
+    Default: Develop
+    AllowedValues:
+    - Develop
+    - Production
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: Tagging and billing
+      Parameters:      
+      - NameProject
+    - Label:
+        default: Choose Branch and Environment
+      Parameters:
+      - Environment      
+
+# Mappings:
+
+Resources:
+  AWSDeveloperTools:    
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      RepositoryDescription: Repositorio que contiene el código del api (Lambda)
+      RepositoryName: 
+        !Join
+        - ''
+        - - !Ref Environment
+          - !Ref NameProject          
+      # Triggers:
+      #   - trigger
+  
+
+# Outputs:
+#   PathToMasterStackFile
