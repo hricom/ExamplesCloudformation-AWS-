@@ -1,3 +1,7 @@
 # ExamplesCloudformation-AWS-
+
 Basic examples of creating resources with cloudformation for aws
-Notas.
+
+Notes.
+
+- Creation of items collection
