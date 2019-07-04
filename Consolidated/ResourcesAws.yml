@@ -18,18 +18,29 @@ Parameters:
     AllowedValues:
     - Develop
     - Production
+  Buildspec:
+    Description: file belonging to the environment (buildspec)
+    Type: String
+    Default: dev.yml
+    AllowedValues:
+    - dev.yml
+    - prn.yml
 
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
     - Label:
-        default: Tagging and billing
+        default: Choose the Name Project
       Parameters:      
       - NameProject
     - Label:
         default: Choose Branch and Environment
       Parameters:
-      - Environment      
+      - Environment  
+    - Label:
+        default: Choose the buildspec
+      Parameters:
+      - Buildspec     
 
 # Mappings:
 
@@ -45,7 +56,47 @@ Resources:
           - !Ref NameProject          
       # Triggers:
       #   - trigger
-  
+  AWSDeveloperToolsCodeBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        EncryptionDisabled: false
+        Name: 
+          !Join
+          - ''
+          - - CodeBuild
+            - !Ref NameProject 
+        Packaging: NONE
+        Type: CODEPIPELINE
+      BadgeEnabled: false
+      Cache:
+        Type: NO_CACHE
+      Description: Build for the example api
+      EncryptionKey: 'arn:aws:kms:us-east-1:360489944345:alias/aws/s3'
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: 'aws/codebuild/nodejs:8.11.0'
+        PrivilegedMode: false
+        Type: LINUX_CONTAINER
+      Name: 
+        !Join
+            - ''
+            - - CodeBuild
+              - !Ref NameProject
+      ServiceRole: >-
+        arn:aws:iam::360489944345:role/service-role/codebuild-IM_Build_LoadFixedInventory_Ic-service-role
+      Source:
+        BuildSpec: config/buildspec/pro.yml
+          !Join
+            - ''
+            - - config/buildspec              
+              - !Ref Buildspec
+        InsecureSsl: false
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 60
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: a7c841c7-05cf-4b62-a420-8a36a7aae75c
 
 # Outputs:
 #   PathToMasterStackFile
