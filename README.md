@@ -15,3 +15,5 @@ Notes.
 * Provisioning on demand
 
 * Creation of global indexes
+
+![stack Overflow](http://lmsotfy.com/so.png)
